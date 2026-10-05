@@ -1,5 +1,6 @@
 package com.chinaex123.vss_villager_trades.client.menu;
 
+import com.chinaex123.vss_villager_trades.util.TradeRules;
 import com.chinaex123.vss_villager_trades.event.VillagerShopManager;
 import com.chinaex123.vss_villager_trades.util.ViScriptShopUtil;
 import net.minecraft.server.level.ServerPlayer;
@@ -53,13 +54,13 @@ public final class TradeExecutor {
         if (offerIndex < 0 || offerIndex >= serverOffers.size()) return new Result(false, balance);
 
         MerchantOffer offer = serverOffers.get(offerIndex);
-        if (offer.isOutOfStock()) return new Result(false, balance);
+        if (TradeRules.isSoldOut(offer)) return new Result(false, balance);
 
         boolean didAny = false;
         int currentBalance = balance;
 
         for (int n = 0; n < count; n++) {
-            if (offer.isOutOfStock()) break;
+            if (TradeRules.isSoldOut(offer)) break;
 
             if (VillagerShopManager.isSellOffer(offer)) {
                 Integer newBal = trySell(offer, player, currentBalance);
@@ -71,7 +72,7 @@ public final class TradeExecutor {
                 currentBalance = newBal;
             }
 
-            offer.increaseUses();
+            TradeRules.onTradeSuccess(offer);
             didAny = true;
         }
 

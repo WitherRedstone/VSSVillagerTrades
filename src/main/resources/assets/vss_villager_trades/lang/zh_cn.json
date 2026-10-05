@@ -7,5 +7,6 @@
     "tooltip.vss_villager_trades.no_price": "（无绿宝石价格，无法交易）",
     "tooltip.vss_villager_trades.out_of_stock": "已售罄",
     "tooltip.vss_villager_trades.uses": "剩余次数: %s/%s",
-    "tooltip.vss_villager_trades.click_to_trade": "点击执行交易"
+    "tooltip.vss_villager_trades.click_to_trade": "点击执行交易",
+    "tooltip.vss_villager_trades.infinite": "无限交易！"
 }

@@ -1,6 +1,7 @@
 package com.chinaex123.vss_villager_trades.client.gui;
 
 import com.chinaex123.vss_villager_trades.event.VillagerShopManager;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.MerchantOffer;
@@ -12,6 +13,12 @@ import net.minecraft.world.item.trading.MerchantOffer;
  * 出售交易绘制所需物品、箭头与可得货币，购买交易绘制所需物品、价格、箭头与产出物品。
  */
 public final class TradeOfferRenderer {
+
+    // 输入 VSS货币 的位置
+    private static final int SELL_VSS_X = 23;
+
+    // 出售物品的位置
+    private static final int BUY_ITEM_X = 66;
 
     /**
      * 私有构造函数，防止实例化。
@@ -31,7 +38,7 @@ public final class TradeOfferRenderer {
      * @param x     绘制起始 X 坐标
      * @param y     绘制起始 Y 坐标
      */
-    public static void renderRow(GuiGraphics g, net.minecraft.client.gui.Font font, MerchantOffer offer, int x, int y) {
+    public static void renderRow(GuiGraphics g, Font font, MerchantOffer offer, int x, int y) {
         if (VillagerShopManager.isSellOffer(offer)) {
             renderSell(g, font, offer, x, y);
         } else {
@@ -50,7 +57,7 @@ public final class TradeOfferRenderer {
      * @param x     绘制起始 X 坐标
      * @param y     绘制起始 Y 坐标
      */
-    private static void renderSell(GuiGraphics g, net.minecraft.client.gui.Font font, MerchantOffer offer, int x, int y) {
+    private static void renderSell(GuiGraphics g, Font font, MerchantOffer offer, int x, int y) {
         ItemStack need = VillagerShopManager.getNonEmeraldCost(offer);
         if (!need.isEmpty()) {
             g.renderItem(need, x + 4, y + 2);
@@ -59,7 +66,7 @@ public final class TradeOfferRenderer {
         g.drawString(font, "→", x + 50, y + 6, 0xFFCCCCCC, false);
 
         int reward = VillagerShopManager.emeraldRewardFromSell(offer);
-        g.drawString(font, TradeTooltipRenderer.priceText(reward), x + 63, y + 6, 0xFF55FF55, false);
+        g.drawString(font, TradeTooltipRenderer.priceText(reward), x + BUY_ITEM_X, y + 6, 0xFF55FF55, false);
     }
 
     /**
@@ -73,8 +80,10 @@ public final class TradeOfferRenderer {
      * @param x     绘制起始 X 坐标
      * @param y     绘制起始 Y 坐标
      */
-    private static void renderBuy(GuiGraphics g, net.minecraft.client.gui.Font font, MerchantOffer offer, int x, int y) {
+    private static void renderBuy(GuiGraphics g, Font font, MerchantOffer offer, int x, int y) {
         ItemStack need = VillagerShopManager.getNonEmeraldCost(offer);
+        ItemStack result = offer.getResult();
+
         if (!need.isEmpty()) {
             g.renderItem(need, x + 4, y + 2);
             g.renderItemDecorations(font, need, x + 4, y + 2);
@@ -82,13 +91,14 @@ public final class TradeOfferRenderer {
 
         int cost = VillagerShopManager.emeraldCostToVSS(offer);
         if (cost >= 0) {
-            g.drawString(font, TradeTooltipRenderer.priceText(cost), x + 22, y + 6, 0xFFFFAA00, false);
+            g.drawString(font, TradeTooltipRenderer.priceText(cost), x + SELL_VSS_X, y + 6, 0xFFFFAA00, false);
         } else {
-            g.drawString(font, "?", x + 24, y + 6, 0xFF888888, false);
+            g.drawString(font, "?", x + SELL_VSS_X, y + 6, 0xFF888888, false);
         }
 
         g.drawString(font, "→", x + 50, y + 6, 0xFFCCCCCC, false);
-        g.renderItem(offer.getResult(), x + 62, y + 2);
-        g.renderItemDecorations(font, offer.getResult(), x + 62, y + 2);
+
+        g.renderItem(result, x + BUY_ITEM_X, y + 2);
+        g.renderItemDecorations(font, result, x + BUY_ITEM_X, y + 2);
     }
 }

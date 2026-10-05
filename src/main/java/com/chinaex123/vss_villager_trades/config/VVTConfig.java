@@ -6,6 +6,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 import java.util.List;
 
 public class VVTConfig {
+    public static final ModConfigSpec.BooleanValue INFINITE_TRADES;
     public static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
     public static final ModConfigSpec SPEC;
 
@@ -14,6 +15,9 @@ public class VVTConfig {
     static {
         BUILDER.comment("通用配置").push("Common Config");
 
+        INFINITE_TRADES = BUILDER
+                .comment("是否启用无限交易")
+                        .define("infiniteTrades", false);
         CURRENCY_ITEMS = BUILDER
                 .comment(
                         "村民交易使用的货币物品列表",
