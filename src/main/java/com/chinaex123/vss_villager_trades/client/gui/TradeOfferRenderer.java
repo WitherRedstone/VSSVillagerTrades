@@ -5,10 +5,32 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.MerchantOffer;
 
+/**
+ * 交易条目渲染工具。
+ * <p>
+ * 依据交易类型在指定位置绘制交易行内容：
+ * 出售交易绘制所需物品、箭头与可得货币，购买交易绘制所需物品、价格、箭头与产出物品。
+ */
 public final class TradeOfferRenderer {
 
+    /**
+     * 私有构造函数，防止实例化。
+     * <p>
+     * 该类只提供静态方法，不需要实例。
+     */
     private TradeOfferRenderer() {}
 
+    /**
+     * 绘制单行交易条目。
+     * <p>
+     * 依据交易是否为出售交易分别调用对应的绘制逻辑。
+     *
+     * @param g     图形上下文
+     * @param font  字体
+     * @param offer 交易项
+     * @param x     绘制起始 X 坐标
+     * @param y     绘制起始 Y 坐标
+     */
     public static void renderRow(GuiGraphics g, net.minecraft.client.gui.Font font, MerchantOffer offer, int x, int y) {
         if (VillagerShopManager.isSellOffer(offer)) {
             renderSell(g, font, offer, x, y);
@@ -17,6 +39,17 @@ public final class TradeOfferRenderer {
         }
     }
 
+    /**
+     * 绘制出售交易行。
+     * <p>
+     * 依次绘制所需物品及其数量装饰、箭头与可得货币数量。
+     *
+     * @param g     图形上下文
+     * @param font  字体
+     * @param offer 交易项
+     * @param x     绘制起始 X 坐标
+     * @param y     绘制起始 Y 坐标
+     */
     private static void renderSell(GuiGraphics g, net.minecraft.client.gui.Font font, MerchantOffer offer, int x, int y) {
         ItemStack need = VillagerShopManager.getNonEmeraldCost(offer);
         if (!need.isEmpty()) {
@@ -29,6 +62,17 @@ public final class TradeOfferRenderer {
         g.drawString(font, TradeTooltipRenderer.priceText(reward), x + 63, y + 6, 0xFF55FF55, false);
     }
 
+    /**
+     * 绘制购买交易行。
+     * <p>
+     * 依次绘制所需物品及其数量装饰、价格（无效时显示问号）、箭头与产出物品及其数量装饰。
+     *
+     * @param g     图形上下文
+     * @param font  字体
+     * @param offer 交易项
+     * @param x     绘制起始 X 坐标
+     * @param y     绘制起始 Y 坐标
+     */
     private static void renderBuy(GuiGraphics g, net.minecraft.client.gui.Font font, MerchantOffer offer, int x, int y) {
         ItemStack need = VillagerShopManager.getNonEmeraldCost(offer);
         if (!need.isEmpty()) {

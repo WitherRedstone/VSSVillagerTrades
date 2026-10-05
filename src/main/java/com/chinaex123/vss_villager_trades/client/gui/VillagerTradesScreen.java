@@ -17,13 +17,31 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 
+/**
+ * 村民交易界面。
+ * <p>
+ * 绘制交易背景、交易条目与滚动条，并在顶部显示玩家 VSS 余额。
+ * 支持鼠标滚轮与拖动滚动条翻动交易列表，
+ * 点击交易条目或按住 Shift 点击可发送对应次数的交易请求。
+ */
 @OnlyIn(Dist.CLIENT)
 public class VillagerTradesScreen extends AbstractContainerScreen<VillagerTradesMenu> {
+
+    /** 界面背景纹理位置 */
     public static final ResourceLocation BACKGROUND = VSSVillagerTrades.id("textures/gui/villager_trades.png");
 
+    /** 交易条目按钮数组 */
     private final Button[] offerButtons = new Button[TradeListLayout.OFFER_COUNT];
+    /** 滚动控制器 */
     private final TradeScrollController scrollController = new TradeScrollController();
 
+    /**
+     * 构造村民交易界面。
+     *
+     * @param menu      村民交易菜单
+     * @param inventory 玩家物品栏
+     * @param title     界面标题
+     */
     public VillagerTradesScreen(VillagerTradesMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
         this.imageWidth  = TradeListLayout.GUI_WIDTH;
@@ -32,6 +50,12 @@ public class VillagerTradesScreen extends AbstractContainerScreen<VillagerTrades
         this.inventoryLabelY = this.imageHeight - 91;
     }
 
+    /**
+     * 初始化界面组件。
+     * <p>
+     * 在左侧区域按行创建交易条目按钮，初始均为禁用状态，
+     * 由渲染阶段按实际交易数量启用。
+     */
     @Override
     protected void init() {
         super.init();
@@ -50,6 +74,16 @@ public class VillagerTradesScreen extends AbstractContainerScreen<VillagerTrades
         }
     }
 
+    /**
+     * 渲染界面背景。
+     * <p>
+     * 按界面尺寸将背景纹理绘制到居中位置。
+     *
+     * @param guiGraphics 图形上下文
+     * @param partialTick 部分 tick 插值
+     * @param mouseX      鼠标 X 坐标
+     * @param mouseY      鼠标 Y 坐标
+     */
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
         guiGraphics.blit(BACKGROUND,
@@ -59,6 +93,15 @@ public class VillagerTradesScreen extends AbstractContainerScreen<VillagerTrades
                 TradeListLayout.TEX_WIDTH, TradeListLayout.TEX_HEIGHT);
     }
 
+    /**
+     * 渲染界面标签。
+     * <p>
+     * 在顶部居中绘制标题，并在底部绘制玩家物品栏标题。
+     *
+     * @param guiGraphics 图形上下文
+     * @param mouseX      鼠标 X 坐标
+     * @param mouseY      鼠标 Y 坐标
+     */
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         int x0 = 16, x1 = 83;
@@ -71,8 +114,17 @@ public class VillagerTradesScreen extends AbstractContainerScreen<VillagerTrades
                 this.inventoryLabelX, this.inventoryLabelY, 0x404040, false);
     }
 
-    // ================== 主渲染 ==================
-
+    /**
+     * 主渲染方法。
+     * <p>
+     * 依次渲染背景、基类内容、交易条目、滚动条、VSS 余额与交易提示，
+     * 最后渲染鼠标悬停提示。
+     *
+     * @param guiGraphics 图形上下文
+     * @param mouseX      鼠标 X 坐标
+     * @param mouseY      鼠标 Y 坐标
+     * @param partialTick 部分 tick 插值
+     */
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
@@ -86,6 +138,14 @@ public class VillagerTradesScreen extends AbstractContainerScreen<VillagerTrades
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
+    /**
+     * 渲染可见的交易条目。
+     * <p>
+     * 依据滚动偏移计算每行对应的交易索引，
+     * 在范围内时启用按钮并绘制交易行，售罄的交易额外叠加半透明蒙层。
+     *
+     * @param g 图形上下文
+     */
     private void renderOffers(GuiGraphics g) {
         List<MerchantOffer> offers = menu.getOffers();
 
@@ -104,6 +164,7 @@ public class VillagerTradesScreen extends AbstractContainerScreen<VillagerTrades
 
             TradeOfferRenderer.renderRow(g, this.font, offer, x, y);
 
+            // 售罄时叠加半透明蒙层
             if (offer.isOutOfStock()) {
                 g.fill(x, y,
                         x + TradeListLayout.TRADE_ITEM_W,
@@ -113,6 +174,14 @@ public class VillagerTradesScreen extends AbstractContainerScreen<VillagerTrades
         }
     }
 
+    /**
+     * 渲染滚动条。
+     * <p>
+     * 交易总数不超过可见行数时不绘制；
+     * 否则依据当前偏移计算滑块位置与高度，并分层绘制滚动条与滑块。
+     *
+     * @param g 图形上下文
+     */
     private void renderScroller(GuiGraphics g) {
         int total = menu.getOffers().size();
         if (total <= TradeListLayout.OFFER_COUNT) return;
@@ -127,6 +196,13 @@ public class VillagerTradesScreen extends AbstractContainerScreen<VillagerTrades
         g.fill(x + 1, y + 1, x + TradeListLayout.SCROLLER_W - 1, y + 2, 0xFFC6C6C6);
     }
 
+    /**
+     * 渲染玩家 VSS 余额。
+     * <p>
+     * 在指定区域水平居中显示货币符号与格式化后的余额。
+     *
+     * @param g 图形上下文
+     */
     private void renderVssBalance(GuiGraphics g) {
         int balance = menu.getVssBalance();
         Component text = Component.literal("◎ ")
@@ -140,6 +216,15 @@ public class VillagerTradesScreen extends AbstractContainerScreen<VillagerTrades
         g.drawString(this.font, text, textX, textY, 0xFF000000, false);
     }
 
+    /**
+     * 渲染交易条目的悬停提示。
+     * <p>
+     * 找到首个悬停且有效的交易条目后，构建并显示其提示信息，随后返回。
+     *
+     * @param g      图形上下文
+     * @param mouseX 鼠标 X 坐标
+     * @param mouseY 鼠标 Y 坐标
+     */
     private void renderOfferTooltip(GuiGraphics g, int mouseX, int mouseY) {
         List<MerchantOffer> offers = menu.getOffers();
 
@@ -155,6 +240,18 @@ public class VillagerTradesScreen extends AbstractContainerScreen<VillagerTrades
         }
     }
 
+    /**
+     * 处理鼠标滚轮事件。
+     * <p>
+     * 交易总数超过可见行数时交由滚动控制器处理并消费该事件，
+     * 否则调用父类处理。
+     *
+     * @param mouseX  鼠标 X 坐标
+     * @param mouseY  鼠标 Y 坐标
+     * @param scrollX 水平滚动量
+     * @param scrollY 垂直滚动量
+     * @return 事件是否被处理
+     */
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         int total = menu.getOffers().size();
@@ -165,6 +262,17 @@ public class VillagerTradesScreen extends AbstractContainerScreen<VillagerTrades
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
+    /**
+     * 处理鼠标点击事件。
+     * <p>
+     * 若点击位置命中滚动条滑块，则开始拖动并消费该事件，
+     * 否则调用父类处理。
+     *
+     * @param mouseX 鼠标 X 坐标
+     * @param mouseY 鼠标 Y 坐标
+     * @param button 鼠标按键
+     * @return 事件是否被处理
+     */
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         int relX = (int) mouseX - this.leftPos;
@@ -177,6 +285,19 @@ public class VillagerTradesScreen extends AbstractContainerScreen<VillagerTrades
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
+    /**
+     * 处理鼠标拖动事件。
+     * <p>
+     * 处于拖动状态且为左键时，交由滚动控制器按鼠标位置更新偏移并消费该事件，
+     * 否则调用父类处理。
+     *
+     * @param mouseX 鼠标 X 坐标
+     * @param mouseY 鼠标 Y 坐标
+     * @param button 鼠标按键
+     * @param dragX  水平拖动量
+     * @param dragY  垂直拖动量
+     * @return 事件是否被处理
+     */
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button,
                                 double dragX, double dragY) {
@@ -187,6 +308,17 @@ public class VillagerTradesScreen extends AbstractContainerScreen<VillagerTrades
         return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 
+    /**
+     * 处理鼠标释放事件。
+     * <p>
+     * 处于拖动状态且为左键时结束拖动并消费该事件，
+     * 否则调用父类处理。
+     *
+     * @param mouseX 鼠标 X 坐标
+     * @param mouseY 鼠标 Y 坐标
+     * @param button 鼠标按键
+     * @return 事件是否被处理
+     */
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         if (scrollController.isDragging() && button == 0) {
@@ -196,8 +328,14 @@ public class VillagerTradesScreen extends AbstractContainerScreen<VillagerTrades
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
-    // ================== 交易发包 ==================
-
+    /**
+     * 发送交易请求。
+     * <p>
+     * 依据滚动偏移计算点击行对应的交易索引并校验范围，
+     * 普通点击请求一次交易，按住 Shift 时请求不超过剩余库存与 64 次的交易。
+     *
+     * @param row 点击的行号
+     */
     private void trade(int row) {
         int index = scrollController.offset() + row;
         List<MerchantOffer> offers = menu.getOffers();

@@ -14,7 +14,7 @@ Add VSS transactions for the villagers.
 [[mixins]]
 config="${mod_id}.mixins.json"
 
-[[dependencies.${mod_id}]] #optional
+[[dependencies.${mod_id}]]
     modId="neoforge"
     type="required"
     versionRange="[${neo_version},)"
