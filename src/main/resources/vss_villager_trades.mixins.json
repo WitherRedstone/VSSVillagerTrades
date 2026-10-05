@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "com.chinaex123.vss_villager_trades.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "VillagerUpdateTradesMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

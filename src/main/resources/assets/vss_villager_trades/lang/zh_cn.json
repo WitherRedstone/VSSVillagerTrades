@@ -1,0 +1,11 @@
+{
+    "tooltip.vss_villager_trades.symbol.currency": "◎",
+    "tooltip.vss_villager_trades.sell": "出售: %s x%s",
+    "tooltip.vss_villager_trades.sell_reward": "获得 VSS: %s",
+    "tooltip.vss_villager_trades.need": "需要: %s x%s",
+    "tooltip.vss_villager_trades.buy_price": "VSS 价格: %s",
+    "tooltip.vss_villager_trades.no_price": "（无绿宝石价格，无法交易）",
+    "tooltip.vss_villager_trades.out_of_stock": "已售罄",
+    "tooltip.vss_villager_trades.uses": "剩余次数: %s/%s",
+    "tooltip.vss_villager_trades.click_to_trade": "点击执行交易"
+}

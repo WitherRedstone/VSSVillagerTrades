@@ -1,0 +1,11 @@
+{
+  "tooltip.vss_villager_trades.symbol.currency": "◎",
+  "tooltip.vss_villager_trades.sell": "Sell: %s x%s",
+  "tooltip.vss_villager_trades.sell_reward": "Get VSS: %s",
+  "tooltip.vss_villager_trades.need": "Need: %s x%s",
+  "tooltip.vss_villager_trades.buy_price": "VSS Price: %s",
+  "tooltip.vss_villager_trades.no_price": "(No emerald price, cannot trade)",
+  "tooltip.vss_villager_trades.out_of_stock": "Out of Stock",
+  "tooltip.vss_villager_trades.uses": "Remaining: %s/%s",
+  "tooltip.vss_villager_trades.click_to_trade": "Click to trade"
+}
