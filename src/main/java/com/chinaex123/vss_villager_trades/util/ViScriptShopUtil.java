@@ -1,4 +1,4 @@
-package com.chinaex123.vss_villager_trades.utils;
+package com.chinaex123.vss_villager_trades.util;
 
 import com.viscriptshop.util.ViScriptShopServerUtil;
 import net.minecraft.server.level.ServerPlayer;

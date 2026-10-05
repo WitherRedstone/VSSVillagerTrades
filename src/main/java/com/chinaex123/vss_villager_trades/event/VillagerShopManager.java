@@ -3,7 +3,7 @@ package com.chinaex123.vss_villager_trades.event;
 import com.chinaex123.vss_villager_trades.api.VSSVillagerCurrency;
 import com.chinaex123.vss_villager_trades.client.menu.VillagerTradesMenu;
 import com.chinaex123.vss_villager_trades.network.VillagerOffersPacket;
-import com.chinaex123.vss_villager_trades.utils.ViScriptShopUtil;
+import com.chinaex123.vss_villager_trades.util.ViScriptShopUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;

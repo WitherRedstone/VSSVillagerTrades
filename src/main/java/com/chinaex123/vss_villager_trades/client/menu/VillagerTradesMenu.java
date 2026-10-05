@@ -4,7 +4,7 @@ import com.chinaex123.vss_villager_trades.event.VillagerShopManager;
 import com.chinaex123.vss_villager_trades.init.VVTMenuTypes;
 import com.chinaex123.vss_villager_trades.network.VSSBalancePacket;
 import com.chinaex123.vss_villager_trades.network.VillagerOffersPacket;
-import com.chinaex123.vss_villager_trades.utils.ViScriptShopUtil;
+import com.chinaex123.vss_villager_trades.util.ViScriptShopUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;

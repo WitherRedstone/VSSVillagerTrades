@@ -14,7 +14,6 @@ import java.util.Map;
 
 public final class VSSVillagerCurrency {
 
-    /** 货币物品 → 每单位多少 VSS */
     private static final Map<Item, Integer> currencies = new HashMap<>();
 
     private static boolean initialized = false;
@@ -70,8 +69,6 @@ public final class VSSVillagerCurrency {
         }
     }
 
-    // ================== 判断 ==================
-
     public static boolean isCurrency(ItemStack stack) {
         if (stack.isEmpty()) return false;
         return currencies.containsKey(stack.getItem());
@@ -84,8 +81,6 @@ public final class VSSVillagerCurrency {
     public static boolean isBuyOffer(MerchantOffer offer) {
         return !isSellOffer(offer);
     }
-
-    // ================== 换算 ==================
 
     /** 拿某物品的单价 */
     public static int getUnitPrice(Item item) {
