@@ -187,13 +187,14 @@ public class VillagerTradesMenu extends AbstractContainerMenu {
     /**
      * 检查玩家是否仍然可以访问此菜单。
      * <p>
-     * 该菜单始终有效。
+     * 检查村民是否仍然存活且距离玩家在允许范围内。
      *
      * @param player 要检查的玩家
-     * @return 始终返回 true
+     * @return 村民存活且距离足够远时返回 true
      */
     @Override
     public boolean stillValid(@NotNull Player player) {
-        return true;
+        return villager != null && villager.isAlive()
+                && player.distanceToSqr(villager) <= 64.0;
     }
 }

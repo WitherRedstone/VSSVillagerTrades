@@ -97,6 +97,8 @@ dependencies {
     localRuntime "curse.maven:jade-324717:8591319"
     localRuntime "curse.maven:kubejs-238086:8843626"
     localRuntime "curse.maven:rhino-416294:8463898"
+
+    localRuntime "curse.maven:easy-villagers-400514:9067113"
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

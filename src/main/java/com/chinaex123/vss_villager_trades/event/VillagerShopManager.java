@@ -53,6 +53,7 @@ public final class VillagerShopManager {
         Player player = event.getEntity();
         if (!(player instanceof ServerPlayer serverPlayer)) return;
         if (!(event.getTarget() instanceof AbstractVillager villager)) return;
+        if (!villager.isAlive()) return;
 
         event.setCancellationResult(InteractionResult.CONSUME);
         event.setCanceled(true);
