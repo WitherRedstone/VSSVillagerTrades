@@ -8,5 +8,6 @@
   "tooltip.vss_villager_trades.out_of_stock": "Out of Stock",
   "tooltip.vss_villager_trades.uses": "Remaining: %s/%s",
   "tooltip.vss_villager_trades.click_to_trade": "Click to trade",
-  "tooltip.vss_villager_trades.infinite": "Infinite Trade!"
+  "tooltip.vss_villager_trades.infinite": "Infinite Trade!",
+  "vss_villager_trades.gui.refresh": "Refresh"
 }

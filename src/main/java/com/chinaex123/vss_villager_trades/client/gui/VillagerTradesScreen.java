@@ -2,10 +2,12 @@ package com.chinaex123.vss_villager_trades.client.gui;
 
 import com.chinaex123.vss_villager_trades.VSSVillagerTrades;
 import com.chinaex123.vss_villager_trades.client.menu.VillagerTradesMenu;
+import com.chinaex123.vss_villager_trades.network.RefreshTradesPacket;
 import com.chinaex123.vss_villager_trades.network.TradeRequestPacket;
 import com.chinaex123.vss_villager_trades.util.NumberFormatter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -32,6 +34,8 @@ public class VillagerTradesScreen extends AbstractContainerScreen<VillagerTrades
 
     /** 交易条目按钮数组 */
     private final Button[] offerButtons = new Button[TradeListLayout.OFFER_COUNT];
+    /** 刷新交易按钮 */
+    private RefreshButton refreshButton;
     /** 滚动控制器 */
     private final TradeScrollController scrollController = new TradeScrollController();
 
@@ -72,6 +76,13 @@ public class VillagerTradesScreen extends AbstractContainerScreen<VillagerTrades
             this.addRenderableWidget(offerButtons[row]);
             y += TradeListLayout.TRADE_ITEM_HEIGHT;
         }
+
+        // 刷新交易按钮
+        int btnX = this.leftPos + 108;
+        int btnY = this.topPos + 2;
+        refreshButton = new RefreshButton(btnX, btnY, 16, 16, (btn) -> sendRefresh());
+        refreshButton.active = false;
+        this.addRenderableWidget(refreshButton);
     }
 
     /**
@@ -134,6 +145,7 @@ public class VillagerTradesScreen extends AbstractContainerScreen<VillagerTrades
         renderScroller(guiGraphics);
         renderVssBalance(guiGraphics);
         renderOfferTooltip(guiGraphics, mouseX, mouseY);
+        updateRefreshButton();
 
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
@@ -348,5 +360,31 @@ public class VillagerTradesScreen extends AbstractContainerScreen<VillagerTrades
         int count = shift ? Math.min(remaining, 64) : 1;
 
         PacketDistributor.sendToServer(new TradeRequestPacket(index, count));
+    }
+
+    /**
+     * 每帧更新刷新按钮状态：
+     * 未锁交易 → 激活可点击；已锁 → 禁用变灰。
+     */
+    private void updateRefreshButton() {
+        refreshButton.active = !isTradesLocked();
+    }
+
+    /**
+     * 发送刷新交易请求到服务端。
+     */
+    private void sendRefresh() {
+        PacketDistributor.sendToServer(new RefreshTradesPacket());
+    }
+
+    /**
+     * 判断交易列表是否已锁（任一交易项已使用过）。
+     * 用于控制刷新按钮的启用状态。
+     */
+    private boolean isTradesLocked() {
+        for (MerchantOffer offer : menu.getOffers()) {
+            if (offer.getUses() > 0) return true;
+        }
+        return false;
     }
 }

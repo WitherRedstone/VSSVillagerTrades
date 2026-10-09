@@ -44,12 +44,6 @@ public final class VillagerShopManager {
      * @param villager 目标村民
      */
     public static void openVillagerTrades(ServerPlayer player, AbstractVillager villager) {
-        if (villager instanceof Villager v) {
-            if (v.shouldRestock()) {
-                v.restock();
-            }
-        }
-
         MerchantOffers offers = getOffersFromVillager(villager);
         int balance = ViScriptShopUtil.getMoney(player);
         Component title = getVillagerTitle(villager);

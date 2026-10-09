@@ -1,9 +1,12 @@
 package com.chinaex123.vss_villager_trades.client.menu;
 
 import com.chinaex123.vss_villager_trades.init.VVTMenuTypes;
+import com.chinaex123.vss_villager_trades.mixin.AbstractVillagerAccessorMixin;
+import com.chinaex123.vss_villager_trades.mixin.VillagerAccessorMixin;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.npc.AbstractVillager;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -151,6 +154,50 @@ public class VillagerTradesMenu extends AbstractContainerMenu {
 
         MenuNetworkSync.sendOffersAndBalance(sp, this.offers, this.vssBalance);
         this.broadcastChanges();
+    }
+
+    /**
+     * 刷新村民交易列表。
+     * <p>
+     * 仅服务端执行：若村民已锁交易（任一 offer 的 uses > 0）则跳过，
+     * 否则调用原版 updateTrades 重建交易列表并同步到客户端。
+     *
+     * @param player 发起刷新请求的玩家
+     */
+    public void refreshTrades(Player player) {
+        if (player.level().isClientSide) return;
+        if (villager == null) return;
+        if (!(player instanceof ServerPlayer sp)) return;
+
+        // 已锁交易 → 不允许刷新
+        if (isTradesLocked()) return;
+
+        if (villager instanceof Villager v) {
+            // 先清掉 offers，让原版 updateTrades 重新生成
+            ((AbstractVillagerAccessorMixin) villager).setVss$Offers(null);
+            ((VillagerAccessorMixin) v).invokeUpdateTrades();
+
+            // 从村民身上拿到更新后的 offers
+            MerchantOffers newOffers = ((AbstractVillagerAccessorMixin) villager).getVss$Offers();
+            if (newOffers != null) {
+                this.offers = new ArrayList<>(newOffers);
+            }
+
+            MenuNetworkSync.sendOffersAndBalance(sp, this.offers, this.vssBalance);
+        }
+    }
+
+    /**
+     * 判断交易列表是否已锁（任一交易项已使用过）。
+     *
+     * @return true 表示有交易痕迹，不能刷新
+     */
+    private boolean isTradesLocked() {
+        if (serverOffers == null) return false;
+        for (MerchantOffer offer : serverOffers) {
+            if (offer.getUses() > 0) return true;
+        }
+        return false;
     }
 
     /**

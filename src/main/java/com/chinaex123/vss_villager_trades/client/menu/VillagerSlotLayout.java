@@ -23,7 +23,7 @@ public final class VillagerSlotLayout {
     /** 输出区域起始 X 坐标 */
     public static final int OUTPUT_X = 108;
     /** 输出区域起始 Y 坐标 */
-    public static final int OUTPUT_Y = 18;
+    public static final int OUTPUT_Y = 19;
     /** 单个槽位的边长 */
     public static final int SLOT_SIZE = 18;
 

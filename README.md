@@ -16,6 +16,7 @@ Add VSS-compatible transactions for villagers
 - **Currency Item Conversion** — Configurable currency items can be mapped to VSS values. For example, 1 emerald = 5 VSS by default. Supports customizing multiple items.
 - **All-Level Trades Unlocked** — Villagers offer trades from all 5 levels at once, eliminating the need to grind lower-level trades to unlock higher ones.
 - **Daily Restock** — Villagers automatically restock sold-out trades at the start of each new game day.
+- **Refresh Trades Button** — Click to refresh the villager's trade list.
 
 ## Configuration
 
@@ -43,6 +44,7 @@ The mod uses a common config file to define the mapping from items to VSS value:
 - **货币物品换算** — 可配置货币物品与 VSS 的换算关系，例如默认 1 绿宝石 = 5 VSS，支持自定义多种物品。
 - **全等级交易解锁** — 村民一次性展示 1 至 5 级全部交易，无需反复刷低级交易来解锁高级交易。
 - **每日自动补货** — 每个游戏日到来时，村民自动补货已售罄的交易。
+- **刷新交易按钮** — 点击刷新村民交易列表。
 
 ## 配置
 

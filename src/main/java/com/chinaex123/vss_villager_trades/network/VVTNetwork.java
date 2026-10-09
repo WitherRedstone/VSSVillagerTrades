@@ -66,6 +66,11 @@ public final class VVTNetwork {
                 TradeRequestPacket.STREAM_CODEC,
                 VVTNetwork::handleTradeRequest
         );
+        registrar.playToServer(
+                RefreshTradesPacket.TYPE,
+                RefreshTradesPacket.STREAM_CODEC,
+                VVTNetwork::handleRefreshTrades
+        );
     }
 
     /**
@@ -119,6 +124,24 @@ public final class VVTNetwork {
             AbstractContainerMenu menu = sender.containerMenu;
             if (menu instanceof VillagerTradesMenu vtm) {
                 vtm.executeTrade(packet.offerIndex(), packet.count(), sender);
+            }
+        });
+    }
+
+    /**
+     * 处理刷新交易请求。
+     * <p>
+     * 仅在主线程中执行，调用菜单的刷新方法。
+     *
+     * @param packet  刷新请求数据包
+     * @param context 上下文
+     */
+    private static void handleRefreshTrades(RefreshTradesPacket packet, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Player sender = context.player();
+            AbstractContainerMenu menu = sender.containerMenu;
+            if (menu instanceof VillagerTradesMenu vtm) {
+                vtm.refreshTrades(sender);
             }
         });
     }
