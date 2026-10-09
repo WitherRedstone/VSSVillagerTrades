@@ -2,24 +2,18 @@ package com.chinaex123.vss_villager_trades.event;
 
 import com.chinaex123.vss_villager_trades.api.VSSVillagerCurrency;
 import com.chinaex123.vss_villager_trades.client.menu.VillagerTradesMenu;
-import com.chinaex123.vss_villager_trades.mixin.VillagerAccessorMixin;
 import com.chinaex123.vss_villager_trades.network.VillagerOffersPacket;
 import com.chinaex123.vss_villager_trades.util.ViScriptShopUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.WanderingTrader;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
@@ -41,40 +35,6 @@ public final class VillagerShopManager {
     private VillagerShopManager() {}
 
     /**
-     * 处理玩家右键村民的事件。
-     * <p>
-     * 以最高优先级拦截服务端玩家与村民的右键交互，
-     * 取消原版交易界面并改为打开自定义村民交易菜单。
-     *
-     * @param event 玩家右键实体事件
-     */
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void onRightClickEntity(PlayerInteractEvent.EntityInteract event) {
-        Player player = event.getEntity();
-        if (!(player instanceof ServerPlayer serverPlayer)) return;
-        if (!(event.getTarget() instanceof AbstractVillager villager)) return;
-        if (!villager.isAlive()) return;
-
-        event.setCancellationResult(InteractionResult.CONSUME);
-        event.setCanceled(true);
-
-        if (villager instanceof Villager v) {
-            // 没职业就摇头
-            if (v.getVillagerData().getProfession() == VillagerProfession.NONE) {
-                ((VillagerAccessorMixin) v).invokeSetUnhappy();
-                return;
-            }
-            // 有职业但没交易还是摇头
-            if (v.getOffers().isEmpty()) {
-                ((VillagerAccessorMixin) v).invokeSetUnhappy();
-                return;
-            }
-        }
-
-        openVillagerTrades(serverPlayer, villager);
-    }
-
-    /**
      * 打开村民交易菜单。
      * <p>
      * 若为普通村民且可补货则先执行补货；随后读取交易列表与玩家余额，
@@ -84,8 +44,10 @@ public final class VillagerShopManager {
      * @param villager 目标村民
      */
     public static void openVillagerTrades(ServerPlayer player, AbstractVillager villager) {
-        if (villager instanceof Villager v && v.shouldRestock()) {
-            v.restock();
+        if (villager instanceof Villager v) {
+            if (v.shouldRestock()) {
+                v.restock();
+            }
         }
 
         MerchantOffers offers = getOffersFromVillager(villager);

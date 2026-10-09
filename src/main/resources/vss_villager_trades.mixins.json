@@ -3,10 +3,12 @@
   "package": "com.chinaex123.vss_villager_trades.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "VillagerInteractMixin",
     "ShowVillagerTradesMixin",
-    "VillagerUpdateTradesMixin",
-    "VillagerDailyRestockMixin",
-    "VillagerAccessorMixin"
+    "VillagerMixin",
+    "VillagerAccessorMixin",
+    "VillagerStartTradingMixin",
+    "AbstractVillagerAccessorMixin"
   ],
   "injectors": {
     "defaultRequire": 1

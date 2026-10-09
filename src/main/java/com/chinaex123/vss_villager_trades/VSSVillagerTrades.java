@@ -2,7 +2,6 @@ package com.chinaex123.vss_villager_trades;
 
 import com.chinaex123.vss_villager_trades.api.VSSVillagerCurrency;
 import com.chinaex123.vss_villager_trades.config.VVTConfig;
-import com.chinaex123.vss_villager_trades.event.VillagerShopManager;
 import com.chinaex123.vss_villager_trades.init.VVTMenuTypes;
 import com.chinaex123.vss_villager_trades.network.VVTNetwork;
 import com.mojang.logging.LogUtils;
@@ -13,7 +12,6 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 
 @Mod(VSSVillagerTrades.MODID)
@@ -26,7 +24,6 @@ public class VSSVillagerTrades {
         modEventBus.register(this);
 
         VVTMenuTypes.register(modEventBus);
-        NeoForge.EVENT_BUS.register(VillagerShopManager.class);
         VVTNetwork.init(modEventBus);
     }
 
